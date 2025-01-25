@@ -8,45 +8,22 @@ on:
       - beta
 
 jobs:
-  setup:
-    name: Set environment variables
-    runs-on: ubuntu-latest
-    outputs:
-      DEPLOY_ENVIRONMENT: ${{ steps.env.outputs.DEPLOY_ENVIRONMENT }}
-    steps:
-      - name: "☁️ compute environment variables"
-        id: env
-        run: |
-          echo "DEPLOY_ENVIRONMENT=$([[ ${{ github.ref_name }} == 'main' ]] && echo 'production' || echo ${{ github.ref_name }})" >> $GITHUB_OUTPUT
-
-  test:
-    name: Test and lint
-    uses: ./.github/workflows/development.yml
-
-  docker:
-    name: Build container
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: "☁️ checkout repository"
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: "🔧 setup buildx"
-        uses: docker/setup-buildx-action@v2
-
-      - name: "🔧 cache docker layers"
-        uses: actions/cache@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          node-version: '22.9.0' # Update to a compatible 
 
-      - name: "🔧 docker meta"
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ github.repository }}
-          tags: latest
+      - name: Install npm@latest
+        run: npm i -g npm@latest
+
+      - name: Install dependencies
+        run: npm install
 
       - name: "📦 docker build"
         uses: docker/build-push-action@v4
