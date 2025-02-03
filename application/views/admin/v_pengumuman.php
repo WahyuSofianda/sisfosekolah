@@ -197,6 +197,5 @@
                     </form>
                 </div>
             </div>
-		aasdasdasdasasd
         </div>
 	<?php endforeach;?>
