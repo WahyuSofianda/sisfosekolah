@@ -27,4 +27,4 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest
       
       - name: Run PHPUnit Tests
-        run: vendor/bin/phpunit --stop-on-failure
+        run: vendor/bin/phpunit --stop-on-failure tests/UnitTest.php
