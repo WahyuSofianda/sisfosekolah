@@ -1,6 +1,6 @@
 {
-  "name": "sisfosekolah",
-  "description": "Deskripsi proyek",
+  "name": "wahyusofianda/sisfosekolah",
+  "description": "Sistem informasi sekolah berbasis web",
   "require": {
     "php": ">=8.0"
   },
