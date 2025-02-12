@@ -1,23 +1,26 @@
-# Gunakan base image PHP 8.1 + Apache
+# Gunakan PHP 8.1 dengan Apache
 FROM php:8.1-apache
 
 # Set working directory
 WORKDIR /var/www/html
 
+# Install dependensi yang diperlukan
+RUN apt-get update && apt-get install -y \
+    unzip zip git curl libzip-dev libpng-dev libjpeg-dev libfreetype6-dev && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install gd zip pdo pdo_mysql
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php && \
+    mv composer.phar /usr/local/bin/composer
+
 # Copy semua file ke dalam container
 COPY . .
 
-# Install ekstensi PHP yang diperlukan
-RUN apt-get update && apt-get install -y \
-    zip unzip git curl libpng-dev libjpeg-dev libfreetype6-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+# Install dependensi dengan Composer
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
-# Install Composer untuk CodeIgniter
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install --no-dev --optimize-autoloader
-
-# Berikan izin pada folder cache dan logs
+# Berikan izin ke folder writable
 RUN chmod -R 777 writable
 
 # Expose port 80 untuk web server
