@@ -50,8 +50,8 @@ jobs:
           sed -i 's/DB_USERNAME=your_db_user/DB_USERNAME=ci_user/' .env
           sed -i 's/DB_PASSWORD=your_db_password/DB_PASSWORD=secret/' .env
 
-      - name: Run Migrations and Seeders
-        run: php spark migrate --all && php spark db:seed DatabaseSeeder
+      - name: Run Migrations
+        run: curl -s http://localhost/index.php/migrate
 
       - name: Run Tests
         run: php vendor/bin/phpunit --coverage-text
