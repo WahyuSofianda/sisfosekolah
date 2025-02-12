@@ -14,13 +14,13 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer
 
-# Copy hanya composer.json dan composer.lock terlebih dahulu
-COPY composer.json composer.lock /var/www/html/
+# Jika composer.lock tidak ada, hanya copy composer.json saja
+COPY composer.json /var/www/html/
 
-# Jalankan Composer Install terlebih dahulu agar lebih efisien dalam caching
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+# Jalankan Composer Install
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs || true
 
-# Baru kemudian copy seluruh file proyek ke dalam container
+# Copy seluruh file proyek ke dalam container
 COPY . /var/www/html
 
 # Pastikan folder writable ada sebelum mengubah izin
