@@ -156,7 +156,7 @@ function limit_words($string, $word_limit)
                         </div>
                     </div>
                 <?php endforeach; ?>
-            </div>
+            </div>asdasdadasda
         </div>
     </div>
 </div>
