@@ -19,6 +19,6 @@ jobs:
           docker build ./front-end-nextjs/ -t rwahyu993/sisfosekolah:latest
       - name: push image to docker hub
         run: |
-          docker login -u rishabkumar7 -p ${{ secrets.DOCKER_HUB_TOKEN }}
-          docker push rishabkumar7/devops-qr-code-backend:latest
-          docker push rishabkumar7/devops-qr-code-frontend:latest
+          docker login -u wahyu993 -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push wahyu993/devops-qr-code-backend:latest
+          docker push wahyu993/devops-qr-code-frontend:latest
