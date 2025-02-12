@@ -14,8 +14,11 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer
 
-# Copy semua file ke dalam container
-COPY . .
+# Copy semua file dari root repo ke dalam container
+COPY . /var/www/html
+
+# Jalankan Composer Install
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # Install dependensi dengan Composer
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
@@ -28,3 +31,5 @@ EXPOSE 80
 
 # Jalankan Apache
 CMD ["apache2-foreground"]
+
+
