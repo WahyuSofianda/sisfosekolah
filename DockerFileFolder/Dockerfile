@@ -14,22 +14,20 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer
 
-# Copy semua file dari root repo ke dalam container
+# Copy hanya composer.json dan composer.lock terlebih dahulu
+COPY composer.json composer.lock /var/www/html/
+
+# Jalankan Composer Install terlebih dahulu agar lebih efisien dalam caching
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+
+# Baru kemudian copy seluruh file proyek ke dalam container
 COPY . /var/www/html
 
-# Jalankan Composer Install
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
-
-# Install dependensi dengan Composer
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
-
-# Berikan izin ke folder writable
-RUN chmod -R 777 writable
+# Pastikan folder writable ada sebelum mengubah izin
+RUN mkdir -p writable && chmod -R 777 writable
 
 # Expose port 80 untuk web server
 EXPOSE 80
 
 # Jalankan Apache
 CMD ["apache2-foreground"]
-
-
