@@ -1,4 +1,4 @@
-name: CI CodeIgniter
+name: CI CodeIgniter 1
 
 on:
   push:
