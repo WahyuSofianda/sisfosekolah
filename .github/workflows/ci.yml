@@ -1,4 +1,4 @@
-name: CI CodeIgniter
+name: CI CodeIgniter 1
 
 on:
   push:
@@ -12,60 +12,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_DATABASE: ci_db
-          MYSQL_USER: ci_user
-          MYSQL_PASSWORD: secret
-          MYSQL_ROOT_PASSWORD: root_secret
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          extensions: mysqli
-          coverage: xdebug
-          ini-values: post_max_size=256M
-          tools: composer
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+        extensions: mbstring, intl, pdo, pdo_mysql
+        coverage: none
 
-      - name: Install Dependencies
-        run: composer install
+    - name: Install dependencies
+      run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
 
-      - name: Copy Env File
-        run: cp .env.example .env
-
-      - name: Update Environment Variables
-        run: |
-          sed -i 's/DB_HOST=localhost/DB_HOST=127.0.0.1/' .env
-          sed -i 's/DB_DATABASE=your_db_name/DB_DATABASE=ci_db/' .env
-          sed -i 's/DB_USERNAME=your_db_user/DB_USERNAME=ci_user/' .env
-          sed -i 's/DB_PASSWORD=your_db_password/DB_PASSWORD=secret/' .env
-
-      - name: Start Apache Server
-        run: php -S 127.0.0.1:8000 -t public &
-
-      - name: Run Migrations
-        run: curl -s http://localhost/index.php/migrate
-
-      - name: Run Seeders
-        run: curl -s http://localhost/index.php/seeder
-
-      - name: Run Tests
-        run: php vendor/bin/phpunit --coverage-text
-
-      - name: Upload Coverage to CodeCov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./tests/coverage.xml
-          flags: unittests
-          name: codeigniter-ci
+    - name: Run PHPUnit tests
+      run: vendor/bin/phpunit --testdox
